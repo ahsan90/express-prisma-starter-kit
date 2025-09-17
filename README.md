@@ -1,4 +1,4 @@
-# Express API Starter Kit
+# Express-Prisma API Starter Kit
 
 A robust, production-ready starter kit for building RESTful APIs with Express.js, TypeScript, Prisma, and modern development practices.
 
@@ -84,7 +84,7 @@ api/
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
+- Node.js (v20 or higher)
 - PostgreSQL database
 - npm or yarn package manager
 
@@ -166,28 +166,12 @@ tail -f logs/*.log   # Monitor application logs
 http://localhost:5050/api/v1
 ```
 
-### Authentication
-
-The API uses JWT tokens for authentication. Include the token in the Authorization header:
-
-```
-Authorization: Bearer <your-jwt-token>
-```
-
 ### Example Endpoints
 
-#### Health Check
+#### Test get request
 
 ```http
-GET /api/v1/test/health
-```
-
-#### Authentication
-
-```http
-POST /api/v1/auth/login
-POST /api/v1/auth/register
-POST /api/v1/auth/refresh
+GET /api/v1/tests
 ```
 
 ## 🔧 Development Guidelines
@@ -237,11 +221,10 @@ npm start
 
 ### Environment Variables
 
-Ensure all required environment variables are set in production:
+Ensure all required environment variables are set in production/development:
 
 - Set `NODE_ENV=production`
-- Use strong, unique secrets for JWT tokens
-- Configure production database URL
+- Configure production/development database URL
 - Set appropriate CORS origins
 
 ### Docker Support
