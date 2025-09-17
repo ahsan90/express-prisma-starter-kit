@@ -63,6 +63,7 @@ api/
 │   │   │   ├── test.controller.ts
 │   │   │   ├── test.routes.ts
 │   │   │   ├── test.service.ts
+│   │   │   ├── test.middleware.ts
 │   │   │   ├── test.dtos.ts
 │   │   │   ├── test.types.ts
 │   │   │   ├── test.utils.ts
