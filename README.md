@@ -271,7 +271,7 @@ If you encounter any issues or have questions:
 1. Check the logs in the `logs/` directory
 2. Review the environment configuration
 3. Ensure database connectivity
-4. Check the [Issues](https://github.com/express-starter-kit/issues) page
+4. Check the [Issues](https://github.com/ahsan90/express-prisma-starter-kit/issues) page
 
 ## 🔄 Updates
 
