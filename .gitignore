@@ -16,3 +16,5 @@ coverage
 .env.production.local
 logs
 /src/generated/prisma
+
+/src/generated/prisma

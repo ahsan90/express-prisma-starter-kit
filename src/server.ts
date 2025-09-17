@@ -4,6 +4,7 @@ import app from './api';
 import { logger } from './common/logger.middleware';
 import os from 'os';
 import { env } from './lib/env';
+import { prisma } from './lib/db';
 
 
 function getSystemInfo() {
@@ -36,6 +37,11 @@ const startServer = async () => {
             logger.info(`Server is running on port ${env.PORT}`);
             logger.info(`Environment: ${env.NODE_ENV}`);
             logger.info(`System Information: ${JSON.stringify(getSystemInfo(), null, 2)}`);
+            prisma.$connect().then(() => {
+                logger.info('Connected to the database successfully.');
+            }).catch((err: any) => {
+                logger.error(`Database connection error: ${err.message}`);
+            });
         });
     } catch (error: any) {
         logger.error(`Error starting server: ${error.message}`);
