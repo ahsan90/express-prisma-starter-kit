@@ -316,13 +316,13 @@ Each feature module should follow this structure:
 Define your database schema in `src/db/schema.ts`:
 
 ```typescript
-import { pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
-    email: varchar('email', { length: 255 }).notNull().unique(),
-    name: text('name'),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  name: text("name"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -334,9 +334,9 @@ export type NewUser = typeof users.$inferInsert;
 Use Drizzle ORM in your services:
 
 ```typescript
-import { db } from '../../lib/db';
-import { users } from '../../db/schema';
-import { eq } from 'drizzle-orm';
+import { db } from "../../lib/db";
+import { users } from "../../db/schema";
+import { eq } from "drizzle-orm";
 
 // Select all users
 const allUsers = await db.select().from(users);
@@ -345,17 +345,20 @@ const allUsers = await db.select().from(users);
 const user = await db.select().from(users).where(eq(users.id, 1));
 
 // Insert
-const newUser = await db.insert(users).values({ 
-    email: 'user@example.com', 
-    name: 'John Doe' 
-}).returning();
+const newUser = await db
+  .insert(users)
+  .values({
+    email: "user@example.com",
+    name: "John Doe",
+  })
+  .returning();
 
 // Update
 const updated = await db
-    .update(users)
-    .set({ name: 'Jane Doe' })
-    .where(eq(users.id, 1))
-    .returning();
+  .update(users)
+  .set({ name: "Jane Doe" })
+  .where(eq(users.id, 1))
+  .returning();
 
 // Delete
 await db.delete(users).where(eq(users.id, 1));

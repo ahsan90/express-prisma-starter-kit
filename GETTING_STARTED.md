@@ -27,6 +27,7 @@ npm install
 ```
 
 This will install all required packages including:
+
 - Express.js
 - Drizzle ORM
 - TypeScript
@@ -51,7 +52,8 @@ JWT_REFRESH_SECRET=your-super-secret-refresh-key-min-32-chars
 API_PREFIX=/api/v1
 ```
 
-**Important:** 
+**Important:**
+
 - Replace `username`, `password`, and `your_database` with your PostgreSQL credentials
 - Generate secure random strings for JWT secrets
 - Never commit `.env` to version control
@@ -78,16 +80,23 @@ Or use a GUI tool like pgAdmin, DBeaver, or TablePlus.
 The starter kit includes example schema. Edit `src/db/schema.ts` to define your tables:
 
 ```typescript
-import { pgTable, serial, text, timestamp, varchar, boolean } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+} from "drizzle-orm/pg-core";
 
-export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
-    email: varchar('email', { length: 255 }).notNull().unique(),
-    name: text('name'),
-    password: text('password').notNull(),
-    isActive: boolean('is_active').default(true),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
-    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  name: text("name"),
+  password: text("password").notNull(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -158,6 +167,7 @@ npx g products --crud
 ```
 
 This creates:
+
 - Controller
 - Service
 - Routes
@@ -189,12 +199,12 @@ Opens a web-based database browser at `https://local.drizzle.studio`
 
 ```typescript
 // src/db/schema.ts
-export const products = pgTable('products', {
-    id: serial('id').primaryKey(),
-    name: varchar('name', { length: 255 }).notNull(),
-    price: integer('price').notNull(),
-    description: text('description'),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  price: integer("price").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type Product = typeof products.$inferSelect;
@@ -202,6 +212,7 @@ export type NewProduct = typeof products.$inferInsert;
 ```
 
 Then run:
+
 ```bash
 npm run db:generate
 npm run db:migrate
@@ -211,9 +222,9 @@ npm run db:migrate
 
 ```typescript
 // src/modules/user/user.service.ts
-import { db } from '../../lib/db';
-import { users } from '../../db/schema';
-import { eq, and, like } from 'drizzle-orm';
+import { db } from "../../lib/db";
+import { users } from "../../db/schema";
+import { eq, and, like } from "drizzle-orm";
 
 // Select all
 const allUsers = await db.select().from(users);
@@ -222,32 +233,32 @@ const allUsers = await db.select().from(users);
 const user = await db.select().from(users).where(eq(users.id, 1));
 
 // Insert
-const newUser = await db.insert(users).values({
-    email: 'user@example.com',
-    name: 'John Doe',
-    password: 'hashed_password'
-}).returning();
+const newUser = await db
+  .insert(users)
+  .values({
+    email: "user@example.com",
+    name: "John Doe",
+    password: "hashed_password",
+  })
+  .returning();
 
 // Update
 const updated = await db
-    .update(users)
-    .set({ name: 'Jane Doe' })
-    .where(eq(users.id, 1))
-    .returning();
+  .update(users)
+  .set({ name: "Jane Doe" })
+  .where(eq(users.id, 1))
+  .returning();
 
 // Delete
 await db.delete(users).where(eq(users.id, 1));
 
 // Complex queries
 const activeUsers = await db
-    .select()
-    .from(users)
-    .where(and(
-        eq(users.isActive, true),
-        like(users.email, '%@company.com')
-    ))
-    .orderBy(desc(users.createdAt))
-    .limit(10);
+  .select()
+  .from(users)
+  .where(and(eq(users.isActive, true), like(users.email, "%@company.com")))
+  .orderBy(desc(users.createdAt))
+  .limit(10);
 ```
 
 ## Project Structure
@@ -309,6 +320,7 @@ PORT=3000
 ### Database Connection Failed
 
 1. Verify PostgreSQL is running:
+
    ```bash
    psql -U postgres -c "SELECT version();"
    ```

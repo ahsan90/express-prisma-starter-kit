@@ -20,7 +20,7 @@ export class UserController {
         try {
             const { id } = req.params;
             const user = await userService.getUserById(parseInt(id));
-            
+
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -42,7 +42,7 @@ export class UserController {
         try {
             const userData = req.body;
             const user = await userService.createUser(userData);
-            
+
             res.status(201).json({
                 success: true,
                 data: user,
@@ -59,7 +59,7 @@ export class UserController {
             const { id } = req.params;
             const userData = req.body;
             const user = await userService.updateUser(parseInt(id), userData);
-            
+
             if (!user) {
                 return res.status(404).json({
                     success: false,
@@ -82,7 +82,7 @@ export class UserController {
         try {
             const { id } = req.params;
             await userService.deleteUser(parseInt(id));
-            
+
             res.json({
                 success: true,
                 message: 'User deleted successfully',

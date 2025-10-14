@@ -17,10 +17,12 @@ This branch (`express-drizzle-starter-kit`) has been converted from Prisma to Dr
 ### 1. Dependencies
 
 **Removed:**
+
 - `@prisma/client`
 - `prisma`
 
 **Added:**
+
 - `drizzle-orm` - Core ORM library
 - `drizzle-kit` - CLI tool for migrations
 - `postgres` - PostgreSQL driver
@@ -28,9 +30,11 @@ This branch (`express-drizzle-starter-kit`) has been converted from Prisma to Dr
 ### 2. Configuration Files
 
 **Removed:**
+
 - `prisma/schema.prisma`
 
 **Added:**
+
 - `drizzle.config.ts` - Drizzle configuration
 - `src/db/schema.ts` - Database schema definition
 - `src/db/migrations/` - Migration files directory
@@ -38,15 +42,17 @@ This branch (`express-drizzle-starter-kit`) has been converted from Prisma to Dr
 ### 3. Database Connection
 
 **Before (Prisma):**
+
 ```typescript
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 ```
 
 **After (Drizzle):**
+
 ```typescript
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 const queryClient = postgres(DATABASE_URL);
 const db = drizzle(queryClient, { schema });
 ```
@@ -54,6 +60,7 @@ const db = drizzle(queryClient, { schema });
 ### 4. Schema Definition
 
 **Before (Prisma):**
+
 ```prisma
 model User {
   id        Int      @id @default(autoincrement())
@@ -64,14 +71,15 @@ model User {
 ```
 
 **After (Drizzle):**
-```typescript
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const users = pgTable('users', {
-    id: serial('id').primaryKey(),
-    email: varchar('email', { length: 255 }).notNull().unique(),
-    name: text('name'),
-    createdAt: timestamp('created_at').defaultNow().notNull(),
+```typescript
+import { pgTable, serial, varchar, text, timestamp } from "drizzle-orm/pg-core";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  name: text("name"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export type User = typeof users.$inferSelect;
@@ -81,6 +89,7 @@ export type NewUser = typeof users.$inferInsert;
 ### 5. Database Queries
 
 **Before (Prisma):**
+
 ```typescript
 // Find all
 const users = await prisma.user.findMany();
@@ -90,13 +99,13 @@ const user = await prisma.user.findUnique({ where: { id: 1 } });
 
 // Create
 const user = await prisma.user.create({
-    data: { email: 'user@example.com', name: 'John' }
+  data: { email: "user@example.com", name: "John" },
 });
 
 // Update
 const user = await prisma.user.update({
-    where: { id: 1 },
-    data: { name: 'Jane' }
+  where: { id: 1 },
+  data: { name: "Jane" },
 });
 
 // Delete
@@ -104,8 +113,9 @@ await prisma.user.delete({ where: { id: 1 } });
 ```
 
 **After (Drizzle):**
+
 ```typescript
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
 
 // Find all
 const users = await db.select().from(users);
@@ -114,17 +124,20 @@ const users = await db.select().from(users);
 const [user] = await db.select().from(users).where(eq(users.id, 1));
 
 // Create
-const [user] = await db.insert(users).values({
-    email: 'user@example.com',
-    name: 'John'
-}).returning();
+const [user] = await db
+  .insert(users)
+  .values({
+    email: "user@example.com",
+    name: "John",
+  })
+  .returning();
 
 // Update
 const [user] = await db
-    .update(users)
-    .set({ name: 'Jane' })
-    .where(eq(users.id, 1))
-    .returning();
+  .update(users)
+  .set({ name: "Jane" })
+  .where(eq(users.id, 1))
+  .returning();
 
 // Delete
 await db.delete(users).where(eq(users.id, 1));
@@ -133,6 +146,7 @@ await db.delete(users).where(eq(users.id, 1));
 ### 6. NPM Scripts
 
 **Before (Prisma):**
+
 ```json
 {
   "scripts": {
@@ -144,6 +158,7 @@ await db.delete(users).where(eq(users.id, 1));
 ```
 
 **After (Drizzle):**
+
 ```json
 {
   "scripts": {
@@ -160,17 +175,20 @@ await db.delete(users).where(eq(users.id, 1));
 ### For New Projects
 
 1. **Clone this branch:**
+
    ```bash
    git clone -b express-drizzle-starter-kit <repo-url>
    cd express-prisma-starter-kit
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables:**
+
    ```bash
    cp env.example.txt .env
    # Edit .env with your database credentials
@@ -180,6 +198,7 @@ await db.delete(users).where(eq(users.id, 1));
    Edit `src/db/schema.ts` to define your tables
 
 5. **Generate and run migrations:**
+
    ```bash
    npm run db:generate
    npm run db:migrate
@@ -197,30 +216,36 @@ If you're migrating an existing Prisma project:
 1. **Backup your database**
 
 2. **Switch to this branch:**
+
    ```bash
    git checkout express-drizzle-starter-kit
    ```
 
 3. **Install new dependencies:**
+
    ```bash
    npm install
    ```
 
 4. **Convert your Prisma schema:**
+
    - Open your old `prisma/schema.prisma`
    - Convert each model to Drizzle table definitions in `src/db/schema.ts`
    - Use the examples in this guide as reference
 
 5. **Generate migrations:**
+
    ```bash
    npm run db:generate
    ```
 
 6. **Review generated migrations:**
+
    - Check `src/db/migrations/` for generated SQL
    - Verify migrations match your existing database structure
 
 7. **Update service files:**
+
    - Replace Prisma Client imports with Drizzle
    - Update query syntax using examples above
    - Update type definitions
@@ -235,29 +260,27 @@ If you're migrating an existing Prisma project:
 ### Select with Relations
 
 **Drizzle:**
+
 ```typescript
-import { eq } from 'drizzle-orm';
+import { eq } from "drizzle-orm";
 
 const usersWithPosts = await db
-    .select()
-    .from(users)
-    .leftJoin(posts, eq(posts.authorId, users.id));
+  .select()
+  .from(users)
+  .leftJoin(posts, eq(posts.authorId, users.id));
 ```
 
 ### Filtering and Sorting
 
 ```typescript
-import { eq, and, or, like, desc } from 'drizzle-orm';
+import { eq, and, or, like, desc } from "drizzle-orm";
 
 // Multiple conditions
 const users = await db
-    .select()
-    .from(users)
-    .where(and(
-        eq(users.isActive, true),
-        like(users.email, '%@example.com')
-    ))
-    .orderBy(desc(users.createdAt));
+  .select()
+  .from(users)
+  .where(and(eq(users.isActive, true), like(users.email, "%@example.com")))
+  .orderBy(desc(users.createdAt));
 ```
 
 ### Pagination
@@ -267,20 +290,18 @@ const page = 1;
 const pageSize = 10;
 
 const users = await db
-    .select()
-    .from(users)
-    .limit(pageSize)
-    .offset((page - 1) * pageSize);
+  .select()
+  .from(users)
+  .limit(pageSize)
+  .offset((page - 1) * pageSize);
 ```
 
 ### Aggregations
 
 ```typescript
-import { count } from 'drizzle-orm';
+import { count } from "drizzle-orm";
 
-const result = await db
-    .select({ count: count() })
-    .from(users);
+const result = await db.select({ count: count() }).from(users);
 ```
 
 ## Drizzle Studio
@@ -292,6 +313,7 @@ npm run db:studio
 ```
 
 Features:
+
 - Browse all tables
 - View and edit data
 - Execute custom queries
@@ -345,13 +367,13 @@ export type NewUser = typeof users.$inferInsert;
 
 ```typescript
 // src/modules/user/user.service.ts
-import { db } from '../../lib/db';
-import { users, type User, type NewUser } from '../../db/schema';
+import { db } from "../../lib/db";
+import { users, type User, type NewUser } from "../../db/schema";
 
 export class UserService {
-    async getAllUsers(): Promise<User[]> {
-        return await db.select().from(users);
-    }
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
 }
 ```
 
@@ -359,13 +381,14 @@ export class UserService {
 
 ```typescript
 try {
-    const user = await db.insert(users).values(data).returning();
-    return user[0];
+  const user = await db.insert(users).values(data).returning();
+  return user[0];
 } catch (error) {
-    if (error.code === '23505') { // Unique violation
-        throw new Error('Email already exists');
-    }
-    throw error;
+  if (error.code === "23505") {
+    // Unique violation
+    throw new Error("Email already exists");
+  }
+  throw error;
 }
 ```
 
@@ -373,8 +396,8 @@ try {
 
 ```typescript
 await db.transaction(async (tx) => {
-    const [user] = await tx.insert(users).values(userData).returning();
-    await tx.insert(posts).values({ ...postData, authorId: user.id });
+  const [user] = await tx.insert(users).values(userData).returning();
+  await tx.insert(posts).values({ ...postData, authorId: user.id });
 });
 ```
 
