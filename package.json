@@ -9,10 +9,16 @@
   "scripts": {
     "dev": "nodemon",
     "build": "rimraf dist && tsc -p .",
-    "start": "node dist/src/server.js"
+    "start": "node dist/src/server.js",
+    "generate": "ts-node scripts/generate-module.ts",
+    "g": "ts-node scripts/generate-module.ts"
+  },
+  "bin": {
+    "g": "scripts/generate-module.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",
+    "commander": "^14.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",

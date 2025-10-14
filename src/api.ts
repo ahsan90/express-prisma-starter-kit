@@ -5,6 +5,7 @@ import { loggingMiddleware } from './common/logger.middleware';
 import cors from 'cors';
 import helmet from 'helmet';
 import { testRoutes } from './modules/test/test.routes';
+import { userRoutes } from './modules/user/user.routes';
 import { env } from './lib/env';
 
 const app = express();
@@ -26,6 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ROUTES
 app.use(env.API_PREFIX, testRoutes);
+app.use(env.API_PREFIX, userRoutes);
 
 
 app.use(errorHandler);

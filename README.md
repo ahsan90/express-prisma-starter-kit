@@ -6,7 +6,6 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 
 - **TypeScript Support**: Full TypeScript configuration with strict type checking
 - **Database Integration**: Prisma ORM with PostgreSQL support
-- **Authentication**: JWT-based authentication with refresh tokens
 - **Security**: Helmet for security headers, CORS configuration
 - **Logging**: Winston logger with daily rotation and console output
 - **Error Handling**: Centralized error handling middleware
@@ -15,6 +14,7 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 - **Caching**: Node-cache for in-memory caching
 - **Development Tools**: Nodemon for hot reloading, Morgan for HTTP logging
 - **Modular Architecture**: Clean separation of concerns with modules
+- **Module Generator CLI**: Automated module generation with API integration
 - **Environment Management**: Dotenv with validation using Joi
 
 ## 🛠 Tech Stack
@@ -26,9 +26,8 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 - **Language**: TypeScript
 - **Database**: PostgreSQL with Prisma ORM
 
-### Security & Authentication
+### Security
 
-- **JWT**: jsonwebtoken for token-based auth
 - **Security**: Helmet for HTTP security headers
 - **CORS**: Configurable CORS settings
 - **Password Security**: Safe-compare for secure comparisons
@@ -69,7 +68,7 @@ api/
 │   │   │   ├── test.utils.ts
 │   │   │   └── test.validators.ts
 │   │   └── user/             # User management module
-│   ├── scripts/              # Utility scripts
+│   ├── scripts/              # Utility scripts (module generator)
 │   └── utils/                # Shared utilities
 ├── prisma/
 │   └── schema.prisma         # Database schema
@@ -80,6 +79,93 @@ api/
 ├── nodemon.json
 └── README.md
 ```
+
+## 🛠 Module Generator CLI
+
+This project includes a powerful CLI tool for generating and managing feature modules with consistent architecture and automatic API integration.
+
+### Features
+
+- **Automatic Module Generation**: Creates complete module structure with controllers, services, routes, and more
+- **Multiple Module Types**: Generate basic modules or full CRUD modules
+- **Auto API Integration**: Automatically adds routes to the main API configuration
+- **Duplication Prevention**: Checks for existing modules to prevent conflicts
+- **Module Removal**: Clean removal of modules and their API integrations
+- **Professional CLI**: Built with Commander.js for robust argument parsing
+
+### Usage
+
+```bash
+# Generate basic module (default - minimal routes)
+npx g <moduleName>
+
+# Generate full CRUD module
+npx g <moduleName> --crud
+
+# Generate basic module explicitly
+npx g <moduleName> --basic
+
+# Remove a module
+npx g <moduleName> --remove
+
+# Show help
+npx g --help
+```
+
+### Examples
+
+```bash
+# Create a basic user module with minimal routes
+npx g user
+
+# Create a full CRUD product module with all operations
+npx g product --crud
+
+# Create a basic category module
+npx g category --basic
+
+# Remove the user module
+npx g user --remove
+```
+
+### Generated Module Structure
+
+Each generated module includes:
+
+```
+modules/<moduleName>/
+├── <moduleName>.controller.ts    # Express controller with routes
+├── <moduleName>.service.ts       # Business logic layer
+├── <moduleName>.routes.ts        # Route definitions
+├── <moduleName>.types.ts         # TypeScript type definitions
+├── <moduleName>.dtos.ts          # Data transfer objects
+├── <moduleName>.validators.ts    # Input validation schemas
+├── <moduleName>.middleware.ts    # Module-specific middleware
+└── <moduleName>.utils.ts         # Utility functions
+```
+
+### Automatic Integration
+
+When you generate a module, the CLI automatically:
+
+- Creates all necessary files with proper TypeScript code
+- Adds the module's routes import to `src/api.ts`
+- Registers the routes with the Express app
+- Follows the project's coding conventions and architecture
+
+### Module Types
+
+**Basic Module** (default):
+
+- Single GET route for retrieving data
+- Minimal service with one method
+- Basic route configuration
+
+**CRUD Module**:
+
+- Full REST API with GET, POST, PUT, DELETE operations
+- Complete service layer with all CRUD methods
+- Comprehensive route definitions
 
 ## 🏁 Getting Started
 
@@ -148,6 +234,12 @@ The server will start on `http://localhost:5050` with hot reloading enabled.
 npm run dev          # Start development server with nodemon
 npm run build        # Build TypeScript to JavaScript
 npm start           # Start production server
+
+# Module Generator CLI
+npx g <name>         # Generate basic module
+npx g <name> --crud  # Generate full CRUD module
+npx g <name> --remove # Remove a module
+npx g --help         # Show CLI help
 
 # Database
 npx prisma generate  # Generate Prisma client

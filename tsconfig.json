@@ -14,7 +14,8 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "scripts/**/*.ts"
   ],
   "exclude": ["node_modules", "dist", "test", "src/utils/ship.deploy.ts"]
 }
