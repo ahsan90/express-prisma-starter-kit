@@ -1,19 +1,16 @@
-import { PrismaClient } from '../generated/prisma';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from '../db/schema';
+import { env } from './env';
 
-let prisma: PrismaClient;
+// Create a postgres connection
+const queryClient = postgres(env.DATABASE_URL);
 
-// For non-production environments, store PrismaClient in a global variable.
-// This prevents multiple PrismaClient instances from being created during hot-reloading.
-if (process.env.NODE_ENV === 'production') {
-    prisma = new PrismaClient();
-} else {
-    // In development, check if global.prisma already exists
-    const globalForPrisma = global as typeof globalThis & { prisma?: PrismaClient };
-    if (!globalForPrisma.prisma) {
-        globalForPrisma.prisma = new PrismaClient();
-    }
-    prisma = globalForPrisma.prisma;
-}
+// Create a drizzle instance with the connection and schema
+export const db = drizzle(queryClient, { schema });
 
-// Export the single PrismaClient instance for use throughout the application
-export { prisma };
+// Export the connection client for raw queries if needed
+export { queryClient };
+
+// Type export for the database instance
+export type Database = typeof db;

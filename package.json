@@ -1,7 +1,7 @@
 {
-  "name": "express-api-starter-kit",
+  "name": "express-drizzle-starter-kit",
   "version": "1.0.0",
-  "description": "A starter kit for building RESTful APIs with Express.js",
+  "description": "A starter kit for building RESTful APIs with Express.js and Drizzle ORM",
   "license": "MIT",
   "author": "",
   "type": "commonjs",
@@ -11,23 +11,28 @@
     "build": "rimraf dist && tsc -p .",
     "start": "node dist/src/server.js",
     "generate": "ts-node scripts/generate-module.ts",
-    "g": "ts-node scripts/generate-module.ts"
+    "g": "ts-node scripts/generate-module.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "bin": {
     "g": "scripts/generate-module.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.2",
     "commander": "^14.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.33.0",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
     "node-cache": "^5.1.2",
+    "postgres": "^3.4.4",
     "rimraf": "^6.0.1",
     "safe-compare": "^1.1.4",
     "socket.io": "^4.8.1",
@@ -41,8 +46,8 @@
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.5.1",
+    "drizzle-kit": "^0.24.2",
     "nodemon": "^3.1.10",
-    "prisma": "^6.16.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }

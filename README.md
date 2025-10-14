@@ -1,11 +1,11 @@
-# Express-Prisma API Starter Kit
+# Express-Drizzle API Starter Kit
 
-A robust, production-ready starter kit for building RESTful APIs with Express.js, TypeScript, Prisma, and modern development practices.
+A robust, production-ready starter kit for building RESTful APIs with Express.js, TypeScript, Drizzle ORM, and modern development practices.
 
 ## 🚀 Features
 
 - **TypeScript Support**: Full TypeScript configuration with strict type checking
-- **Database Integration**: Prisma ORM with PostgreSQL support
+- **Database Integration**: Drizzle ORM with PostgreSQL support
 - **Security**: Helmet for security headers, CORS configuration
 - **Logging**: Winston logger with daily rotation and console output
 - **Error Handling**: Centralized error handling middleware
@@ -16,6 +16,7 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 - **Modular Architecture**: Clean separation of concerns with modules
 - **Module Generator CLI**: Automated module generation with API integration
 - **Environment Management**: Dotenv with validation using Joi
+- **Type-safe Database**: Drizzle ORM with full TypeScript support
 
 ## 🛠 Tech Stack
 
@@ -24,7 +25,7 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 - **Runtime**: Node.js
 - **Framework**: Express.js v5
 - **Language**: TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Drizzle ORM
 
 ### Security
 
@@ -47,16 +48,19 @@ A robust, production-ready starter kit for building RESTful APIs with Express.js
 ## 📁 Project Structure
 
 ```
-api/
 ├── src/
 │   ├── api.ts                 # Main Express app configuration
 │   ├── server.ts              # Server startup and Socket.IO setup
 │   ├── common/
 │   │   ├── errorHandler.ts    # Centralized error handling
 │   │   └── logger.middleware.ts # Logging middleware
+│   ├── db/
+│   │   ├── schema.ts          # Drizzle database schema
+│   │   └── migrations/        # Database migrations
 │   ├── lib/
 │   │   ├── env.ts            # Environment configuration
-│   │   └── db.ts             # Prisma client setup
+│   │   ├── db.ts             # Drizzle client setup
+│   │   └── node-cache.ts     # Cache configuration
 │   ├── modules/              # Feature modules
 │   │   ├── test/             # Example test module
 │   │   │   ├── test.controller.ts
@@ -70,9 +74,8 @@ api/
 │   │   └── user/             # User management module
 │   ├── scripts/              # Utility scripts (module generator)
 │   └── utils/                # Shared utilities
-├── prisma/
-│   └── schema.prisma         # Database schema
 ├── logs/                     # Application logs
+├── drizzle.config.ts         # Drizzle configuration
 ├── env.example.txt           # Environment variables template
 ├── package.json
 ├── tsconfig.json
@@ -210,14 +213,17 @@ When you generate a module, the CLI automatically:
 4. **Database Setup**
 
    ```bash
-   # Generate Prisma client
-   npx prisma generate
+   # Generate Drizzle migrations from schema
+   npm run db:generate
 
-   # Run database migrations
-   npx prisma migrate dev --name init
+   # Apply migrations to database
+   npm run db:migrate
 
-   # (Optional) Seed the database
-   npx prisma db seed
+   # Or push schema directly to database (for development)
+   npm run db:push
+
+   # Open Drizzle Studio (database GUI)
+   npm run db:studio
    ```
 
 5. **Start Development Server**
@@ -242,10 +248,10 @@ npx g <name> --remove # Remove a module
 npx g --help         # Show CLI help
 
 # Database
-npx prisma generate  # Generate Prisma client
-npx prisma migrate dev # Run migrations in development
-npx prisma studio    # Open Prisma Studio
-npx prisma db push   # Push schema changes to database
+npm run db:generate  # Generate Drizzle migrations
+npm run db:migrate   # Run migrations
+npm run db:push      # Push schema to database
+npm run db:studio    # Open Drizzle Studio
 
 # Logging
 tail -f logs/*.log   # Monitor application logs
@@ -303,7 +309,82 @@ Each feature module should follow this structure:
 - Validate all user inputs
 - Provide meaningful error messages
 
-## 🚀 Deployment
+## �️ Working with Drizzle ORM
+
+### Schema Definition
+
+Define your database schema in `src/db/schema.ts`:
+
+```typescript
+import { pgTable, serial, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+
+export const users = pgTable('users', {
+    id: serial('id').primaryKey(),
+    email: varchar('email', { length: 255 }).notNull().unique(),
+    name: text('name'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+```
+
+### Database Queries
+
+Use Drizzle ORM in your services:
+
+```typescript
+import { db } from '../../lib/db';
+import { users } from '../../db/schema';
+import { eq } from 'drizzle-orm';
+
+// Select all users
+const allUsers = await db.select().from(users);
+
+// Select with where clause
+const user = await db.select().from(users).where(eq(users.id, 1));
+
+// Insert
+const newUser = await db.insert(users).values({ 
+    email: 'user@example.com', 
+    name: 'John Doe' 
+}).returning();
+
+// Update
+const updated = await db
+    .update(users)
+    .set({ name: 'Jane Doe' })
+    .where(eq(users.id, 1))
+    .returning();
+
+// Delete
+await db.delete(users).where(eq(users.id, 1));
+```
+
+### Migrations
+
+```bash
+# Generate migrations after schema changes
+npm run db:generate
+
+# Apply migrations to database
+npm run db:migrate
+
+# For development: push schema directly
+npm run db:push
+```
+
+### Drizzle Studio
+
+Access the visual database browser:
+
+```bash
+npm run db:studio
+```
+
+This opens a web interface at `https://local.drizzle.studio` to browse and edit your database.
+
+## �🚀 Deployment
 
 ### Production Build
 
@@ -371,7 +452,7 @@ To update dependencies:
 
 ```bash
 npm update
-npx prisma migrate deploy  # For production database updates
+npm run db:migrate  # For database updates after schema changes
 ```
 
 ---
